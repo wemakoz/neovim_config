@@ -1,5 +1,5 @@
 local fn = vim.fn
-
+local PACKER_USE_POPUP=true 
 -- Automatically install packer
 local install_path = fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
 if fn.empty(fn.glob(install_path)) > 0 then
@@ -24,30 +24,48 @@ vim.cmd [[
 ]]
 
 -- Use a protected call so we don't error out on first use
+-- BTW, pcall(func, *args) calls function <func> with *args arguments, if fails returns status_ok=false, else status_ok=true
+-- Very useful when you not sure for chunk of code that may crash
 local status_ok, packer = pcall(require, "packer")
 if not status_ok then
   print("Error on loading packer.nvim")
   return
 end
 
--- Have packer use a popup window
-packer.init {
-  display = {
-    open_fn = function()
-      return require("packer.util").float { border = "rounded" }
-    end,
-  },
-}
+-- If you would like packer to use popup frame set PACKER_USE_POPUP to true 
+if(PACKER_USE_POPUP) then
+    packer.init {
+      display = {
+        open_fn = function()
+          return require("packer.util").float { border = "rounded" }
+        end,
+      },
+    }
+end
 
--- Install your plugins here
+-- PACKAGES 
 return packer.startup(function(use)
-  -- My plugins here
-  use "wbthomason/packer.nvim" -- Have packer manage itself
-  use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
-  use "nvim-lua/plenary.nvim" -- Useful lua functions used ny lots of plugins
 
-  -- Automatically set up your configuration after cloning packer.nvim
-  -- Put this at the end after all plugins
+  use "wbthomason/packer.nvim" 
+  use "nvim-lua/popup.nvim" 
+  use "nvim-lua/plenary.nvim"
+
+
+  -- Colorschemes 
+ -- use 'lunarvim/colorschemes'
+  use "lunarvim/darkplus.nvim"
+
+  -- cmp plugins
+  use "hrsh7th/nvim-cmp" -- The completion plugin
+  use "hrsh7th/cmp-buffer" -- buffer completions
+  use "hrsh7th/cmp-path" -- path completions
+  use "hrsh7th/cmp-cmdline" -- cmdline completions
+  use "saadparwaiz1/cmp_luasnip" -- snippet completions
+
+  -- snippets
+  use "L3MON4D3/LuaSnip" --snippet engine
+  use "rafamadriz/friendly-snippets" -- a bunch of snippets to use
+
   if PACKER_BOOTSTRAP then
     require("packer").sync()
   end
